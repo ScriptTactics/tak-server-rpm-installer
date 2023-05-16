@@ -34,7 +34,7 @@ sudo yum install takserver-4.9-RELEASE23.noarch.rpm
 
 ## DB Script
 
-After the .rpm is installed then the DB setup script will be created
+After the .rpm is installed then the DB setup script will be executed
 ```bash
 sudo /opt/tak/db-utils/takserver-setup-db.sh
 ```
