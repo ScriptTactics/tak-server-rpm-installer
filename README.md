@@ -62,26 +62,21 @@ export ORGANIZATION=<my-organizaton>
 export ORGANIZATIONAL_UNIT=<my-unit>
 ``` 
 
-Then it'll create the CA, a server cert, a user cert, and an admin cert
+Then it'll create the CA
 ```bash
 ./makeRootCa.sh
 ```
 It will ask you to give a name for your CA: `example-name`
 
-
-The script will then prompt how many certificates you want to generate. Default (3)
+The script will then prompt how many certificates you want to generate. (0-9) Default (3)
 
 The 3 certs that are recommended are as follows:
 
-`cert_type`: server or client
-
-`cert_name`: takserver, admin, user, etc (note admin is required to access the Web UI)
-```
-server takserver
-client user
-client admin
-```
-
+| cert_type         | cert_name     |
+|--------------|-----------|
+| server | takserver     | 
+| client      | user  |
+| client   | admin |
 After the certs have been created the TAK Server service will be restarted. There is currently a 60 second sleep in the script to allow for the certs to reload. (You can tweak this if you have issues.)
 
 ```bash
