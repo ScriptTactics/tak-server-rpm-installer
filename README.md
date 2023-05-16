@@ -55,7 +55,6 @@ sudo systemctl enable takserver
 
 The script will prompt you for the following variables
 
-Then create env variables:
 ```bash
 export STATE=<state>
 export CITY=<city>
