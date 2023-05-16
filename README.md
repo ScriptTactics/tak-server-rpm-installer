@@ -1,6 +1,6 @@
 # tak-server-rpm-installer
 
-# TAK Server Pre-Script Check
+# TAK Server Pre-Script Steps
 
 1. Download the .rpm file from [tak.gov](https://tak.gov/) (4.9 is the latest at this time)
 2. Get [CentOS](http://isoredirect.centos.org/centos/7/isos/x86_64/) ISO (CentOS 7). Setup either a VM or install on baremetal.
