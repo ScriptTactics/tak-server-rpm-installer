@@ -74,6 +74,7 @@ The script will then prompt how many certificates you want to generate. Default 
 The 3 certs that are recommended are as follows:
 
 `cert_type`: server or client
+
 `cert_name`: takserver, admin, user, etc (note admin is required to access the Web UI)
 ```
 server takserver
