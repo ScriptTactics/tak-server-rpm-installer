@@ -15,7 +15,7 @@ The script will first update and upgrade your system by running:
 sudo yum update -y && sudo yum upgrade -y
 ```
 
-Then it will install the dependcies required for TAK Server
+Then it will install the dependencies required for TAK Server
 ```bash
 sudo yum install epel-release -y
 sudo yum install java-11-openjdk-devel -y
