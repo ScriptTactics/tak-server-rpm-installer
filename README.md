@@ -77,6 +77,7 @@ The 3 certs that are recommended are as follows:
 | server | takserver     | 
 | client      | user  |
 | client   | admin |
+
 After the certs have been created the TAK Server service will be restarted. There is currently a 60 second sleep in the script to allow for the certs to reload. (You can tweak this if you have issues.)
 
 ```bash
