@@ -79,14 +79,14 @@ echo "Restarting daemon"
 echo "====================================="
 
 sudo systemctl daemon-reload
-sleep 5
+show_progress_bar 5
 
 # Enable TAK Server
 echo "====================================="
 echo "Enabling TAK Server"
 echo "====================================="
 sudo systemctl enable takserver
-sleep 5
+show_progress_bar 5
 
 # Set up Certificate Authority
 echo "====================================="
