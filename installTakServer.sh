@@ -106,6 +106,7 @@ echo "Restarting daemon"
 echo "====================================="
 
 sudo systemctl daemon-reload
+sleep 5
 display_status_bar_daemon "sudo systemctl status systemd-modules-load.service"
 
 # Enable TAK Server
@@ -113,7 +114,7 @@ echo "====================================="
 echo "Enabling TAK Server"
 echo "====================================="
 sudo systemctl enable takserver
-display_status_bar "takserver"
+sleep 5
 
 # Set up Certificate Authority
 echo "====================================="
@@ -132,41 +133,64 @@ cd /opt/tak/certs
 echo "Generating CA..."
 sudo -E -u tak env STATE="$STATE" CITY="$CITY" ORGANIZATION="$ORGANIZATION" ORGANIZATIONAL_UNIT="$ORGANIZATIONAL_UNIT" ./makeRootCa.sh
 
-echo "Enter the number of certificates you want to generate: (default: 3 server takserver, client user, client admin)"
-read -r cert_count
-cert_count="${cert_count:-3}"
 
+while true; do
+  read -p "Enter the number of certificates you wish to generate [default: 3]: " cert_count
 
-# Validate if the certificate count is entered
-if [[ -z $cert_count || ! $cert_count =~ ^[0-9]+$ ]]; then
-  echo "Invalid certificate count. Exiting..."
-  exit 1
-fi
-
-# Loop through the specified number of iterations
-for ((i = 1; i <= cert_count; i++)); do
-  echo "Certificate $i"
-  
-  # Prompt user to enter certificate type and name
-  echo "Enter certificate type: "
-  read -r cert_type
-
-  echo "Enter certificate name: "
-  read -r cert_name
-
-  # Validate if certificate type and name are entered
-  if [[ -z $cert_type || -z $cert_name ]]; then
-    echo "Incomplete certificate details. Skipping..."
-    continue
+  # Check if the input contains only digits
+  if [[ -z $cert_count ]]; then
+    cert_count=3
+    break
+  elif [[ $cert_count =~ ^[0-9]+$ ]]; then
+    break
+  else
+    echo "Invalid input. Please enter a valid number."
   fi
-
-  # Generate the certificate
-  sudo -E -u tak env STATE="$STATE" CITY="$CITY" ORGANIZATION="$ORGANIZATION" ORGANIZATIONAL_UNIT="$ORGANIZATIONAL_UNIT" ./makeCert.sh "$cert_type" "$cert_name"
 done
+
+default_cert_types=("server" "client" "client")
+default_cert_names=("takserver" "admin" "user")
+if [[ $cert_count -eq 3 ]]; then
+
+  for ((i = 1; i <= 3; i++)); do
+    echo "Certificate $i"
+
+    # Prompt user to enter certificate type or use default
+    read -p "Enter certificate type, Default:[${default_cert_types[i-1]}]: " cert_type
+    cert_type=${cert_type:-${default_cert_types[i-1]}}
+
+    # Prompt user to enter certificate name or use default
+    read -p "Enter certificate name, Default:[${default_cert_names[i-1]}]: " cert_name
+    cert_name=${cert_name:-${default_cert_names[i-1]}}
+
+    # Generate the certificate
+    sudo -E -u tak env STATE="$STATE" CITY="$CITY" ORGANIZATION="$ORGANIZATION" ORGANIZATIONAL_UNIT="$ORGANIZATIONAL_UNIT" ./makeCert.sh "$cert_type" "$cert_name"
+  done
+else
+  # Loop through the specified number of iterations
+  for ((i = 1; i <= cert_count; i++)); do
+    echo "Certificate $i"
+  
+    # Prompt user to enter certificate type and name
+    read -p "Enter certificate type: " cert_type
+
+    read -p "Enter certificate name: " cert_name
+
+    # Validate if certificate type and name are entered
+    if [[ -z $cert_type || -z $cert_name ]]; then
+      echo "Incomplete certificate details. Skipping..."
+      continue
+    fi
+
+    # Generate the certificate
+    sudo -E -u tak env STATE="$STATE" CITY="$CITY" ORGANIZATION="$ORGANIZATION" ORGANIZATIONAL_UNIT="$ORGANIZATIONAL_UNIT" ./makeCert.sh "$cert_type" "$cert_name"
+  done
+  fi
 
 
 echo "Restarting TAK Server... this will take 60 seconds please wait"
 sudo systemctl restart takserver
+sleep 60
 # Show progress of takserver
 display_status_bar "takserver"
 
