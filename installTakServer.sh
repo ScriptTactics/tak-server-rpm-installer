@@ -133,7 +133,6 @@ cd /opt/tak/certs
 echo "Generating CA..."
 sudo -E -u tak env STATE="$STATE" CITY="$CITY" ORGANIZATION="$ORGANIZATION" ORGANIZATIONAL_UNIT="$ORGANIZATIONAL_UNIT" ./makeRootCa.sh
 
-
 while true; do
   read -p "Enter the number of certificates you wish to generate [default: 3]: " cert_count
 
