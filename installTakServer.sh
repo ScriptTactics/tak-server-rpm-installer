@@ -1,38 +1,65 @@
 #!/bin/bash
 # Function to display a progress bar
-function show_progress_bar() {
-  local duration=$1
-  local elapsed=0
-  local progress=0
+display_status_bar() {
+    local service=$1
+    local command="sudo systemctl status $service"
 
-  while [[ $elapsed -lt $duration ]]; do
-    # Calculate the progress percentage
-    progress=$((elapsed * 100 / duration))
+    # Run the command in the background
+    $command &
 
-    # Draw the progress bar
-    bar="["
-    for ((i=0; i<50; i++)); do
-      if [[ $((i * 2)) -lt $progress ]]; then
-        bar+="="
-      else
-        bar+=" "
-      fi
+    # Store the command's process ID
+    PID=$!
+
+    # Define the status bar animation
+    ANIMATION="/-\|"
+
+    # Start the status bar
+    printf "Checking status of $service "
+
+    # Loop until the command completes
+    while kill -0 $PID 2>/dev/null; do
+        # Rotate the animation character
+        ANIMATION=${ANIMATION#?}${ANIMATION%???}
+        # Print the current animation character
+        printf "\b${ANIMATION:0:1}"
+        # Sleep for a short period
+        sleep 0.2
     done
-    bar+="]"
 
-    # Print the progress bar with a carriage return
-    echo -ne "\r$bar $progress%"
-
-    # Sleep for 1 second
-    sleep 1
-
-    # Increment the elapsed time
-    elapsed=$((elapsed + 1))
-  done
-
-  # Print newline after the progress bar
-  echo ""
+    # Print a newline after the command completes
+    printf "\n"
 }
+
+display_status_bar_daemon() {
+    local service=$1
+
+    # Run the command in the background
+    $service &
+
+    # Store the command's process ID
+    PID=$!
+
+    # Define the status bar animation
+    ANIMATION="/-\|"
+
+    # Start the status bar
+    printf "Checking status of $service "
+
+    # Loop until the command completes
+    while kill -0 $PID 2>/dev/null; do
+        # Rotate the animation character
+        ANIMATION=${ANIMATION#?}${ANIMATION%???}
+        # Print the current animation character
+        printf "\b${ANIMATION:0:1}"
+        # Sleep for a short period
+        sleep 0.2
+    done
+
+    # Print a newline after the command completes
+    printf "\n"
+}
+
+
 # Error handling
 set -e
 
@@ -79,14 +106,14 @@ echo "Restarting daemon"
 echo "====================================="
 
 sudo systemctl daemon-reload
-show_progress_bar 5
+display_status_bar_daemon "sudo systemctl status systemd-modules-load.service"
 
 # Enable TAK Server
 echo "====================================="
 echo "Enabling TAK Server"
 echo "====================================="
 sudo systemctl enable takserver
-show_progress_bar 5
+display_status_bar "takserver"
 
 # Set up Certificate Authority
 echo "====================================="
@@ -140,8 +167,9 @@ done
 
 echo "Restarting TAK Server... this will take 60 seconds please wait"
 sudo systemctl restart takserver
-# Sleep for 60 seconds with a progress bar
-show_progress_bar 60 
+# Show progress of takserver
+display_status_bar "takserver"
+
 echo "Authorizing the admin cert. ..."
 sudo -E -u tak java -jar /opt/tak/utils/UserManager.jar certmod -A /opt/tak/certs/files/admin.pem
 
