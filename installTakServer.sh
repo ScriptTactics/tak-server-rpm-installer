@@ -137,7 +137,7 @@ if [[ $cert_count -eq 3 ]]; then
 else
   # Loop through the specified number of iterations
   for ((i = 1; i <= cert_count; i++)); do
-    echo "Certificate $i"
+    echo "====Certificate $i===="
   
     # Prompt user to enter certificate type and name
     read -p "Enter certificate type: " cert_type
@@ -196,8 +196,8 @@ if [[ -z $ip_address ]]; then
 fi
 
 echo "====================================="
-echo "Copy the admin.p12 file located here: /opt/tak/certs/files/admin.p12"
-echo "then import it into your browser"
+echo "Download the admin.p12 file located here: /opt/tak/certs/files/admin.p12"
+echo "then import it into your browser. The default password is atakatak"
 echo "                                 "
 echo "Navigate to the ip below to finish the setup"
 echo "https://$ip_address:8443/setup"
