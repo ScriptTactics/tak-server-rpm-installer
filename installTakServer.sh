@@ -30,36 +30,6 @@ display_status_bar() {
     printf "\n"
 }
 
-display_status_bar_daemon() {
-    local service=$1
-
-    # Run the command in the background
-    $service &
-
-    # Store the command's process ID
-    PID=$!
-
-    # Define the status bar animation
-    ANIMATION="/-\|"
-
-    # Start the status bar
-    printf "Checking status of $service "
-
-    # Loop until the command completes
-    while kill -0 $PID 2>/dev/null; do
-        # Rotate the animation character
-        ANIMATION=${ANIMATION#?}${ANIMATION%???}
-        # Print the current animation character
-        printf "\b${ANIMATION:0:1}"
-        # Sleep for a short period
-        sleep 0.2
-    done
-
-    # Print a newline after the command completes
-    printf "\n"
-}
-
-
 # Error handling
 set -e
 
@@ -107,7 +77,6 @@ echo "====================================="
 
 sudo systemctl daemon-reload
 sleep 5
-display_status_bar_daemon "sudo systemctl status systemd-modules-load.service"
 
 # Enable TAK Server
 echo "====================================="
